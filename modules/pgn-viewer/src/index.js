@@ -16,19 +16,19 @@ smoothscroll.polyfill();
  * Schedules a call, ensures that the result of that call is given back.
  * @param loc the given local, or not defined (default: en)
  * @param func the function that should be called after having loaded the locale.
- * @returns the result of the function call
+ * @returns the Promise to wait for the result
  */
 GLOB_SCHED.schedule = function (loc, func) {
-    let my_res = null;
     let myLoc = (typeof loc != 'undefined') ? loc : 'en';
-    if (i18next.hasResourceBundle(myLoc)) {
-        my_res = func.call(null);
+    if (i18next.hasResourceBundle(myLoc, "chess")) {
+        console.log("Already loaded locale: " + myLoc)
+        return new Promise(func.call(null))
     } else {
-        i18next.loadLanguages(myLoc, (err, t) => {
-            my_res = func.call(null);
-        });
+        return i18next
+            .loadLanguages(myLoc)
+            .then(function () {
+                return func.call(this) })
     }
-    return my_res;
 };
 
 // Users of PgnViewerJS may redefine some defaults by defining globally the var `PgnBaseDefaults.
@@ -61,8 +61,9 @@ let initI18n = function () {
         defaultNS: 'chess',
         debug: false
     };
-    i18next.use(i18nextXHRBackend).use(i18nextLocalStorageCache).init(i18n_option, (err, t) => {
-    });
+    i18next.use(i18nextXHRBackend).use(i18nextLocalStorageCache)
+        .init(i18n_option, (err, t) => {
+    }).then(function () {console.log("Initialized i18n")});
 };
 initI18n();
 
@@ -74,18 +75,16 @@ initI18n();
  * @param configuration the configuration for chess, board and pgn.
  *      See the configuration of `pgnBoard` for the board configuration. Relevant for pgn is:
  *   pgn: the pgn as single string, or empty string (default)
- * @returns {{base, board}} base: all utility functions available, board: reference to Chessground
+ * @returns {{base}} base: all utility functions available, board: reference to Chessground
  */
 let pgnView = function (boardId, configuration) {
     return GLOB_SCHED.schedule(configuration.locale,
         () => {
             let base = pgnBase(boardId, Object.assign({mode: 'view'}, configuration));
             base.generateHTML();
-            base.generateBoard();
+            let board = base.generateBoard();
             base.generateMoves();
-            return {
-                base
-            };
+            return { base, board };
         });
 };
 

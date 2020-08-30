@@ -27,7 +27,7 @@
   "dependencies": {
     "@mliebelt/pgn-reader": "^1.1.1",
     "chessground": "^7.6.12",
-    "i18next": "^19.4.4",
+    "i18next": "^19.7.0",
     "i18next-localstorage-cache": "^1.1.1",
     "i18next-xhr-backend": "^3.2.2",
     "mousetrap": "^1.6.5",

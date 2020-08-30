@@ -180,6 +180,18 @@ let pgnBase = function (boardId, configuration) {
     }
 
     /**
+     * Allows for move to be made programmatically from external javascript
+     * @param san the san formatted move to play
+     */
+    const manualMove = function (san) {
+        const m = game.move(san)
+        if (m === null) return;
+        game.undo();
+        onSnapEnd(m.from, m.to);
+        that.board.set({fen: game.fen()});
+    }
+
+    /**
      * Called when the piece is released. Here should be the logic for calling all
      * pgn enhancement.
      * @param from the source
@@ -1270,14 +1282,13 @@ let pgnBase = function (boardId, configuration) {
     return {
         // PUBLIC API
         chess: game,
-        board: that.board,
-        getPgn: function () {
-            return that.mypgn;
-        },
+        getPgn: that.mypgn,
         generateHTML: generateHTML,
         generateBoard: generateBoard,
         generateMoves: generateMoves,
-        onSnapEnd: onSnapEnd
+        onSnapEnd: onSnapEnd,
+        manualMove: manualMove,
+        that
     };
 };
 
