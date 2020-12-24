@@ -182,6 +182,44 @@ describe("When reading PGN with headers", function() {
     })
 });
 
+describe("When reading chess 960 PGN with headers", function() {
+    let pgn_string = null
+    let pgn_string2 = null
+    let my_pgn = null
+    let my_pgn2 = null
+    beforeEach(function() {
+        pgn_string = ['[Event "GM Blitz Battle Chp - chess 960"]',
+            '[Site "Chess.com"]',
+            '[Date "2016.04.06"]',
+            '[Round "?"]',
+            '[White "Grischuk"]',
+            '[Black "LevonAronian"]',
+            '[Result "1-0"]',
+            '[WhiteElo "2766"]',
+            '[BlackElo "2814"]',
+            '[Variant "chess 960"]',
+            '[SetUp "1"]',
+            '[FEN "bbqrknrn/pppppppp/8/8/8/8/PPPPPPPP/BBQRKNRN w GDgd - 0 1"]',
+            '[PlyCount "67"]',
+            '[EventDate "2016.??.??"]',
+            '[TimeControl "300+2"]',
+            '',
+            '1. c4 b6 2. b3 c5 3. Nhg3 Nhg6 4. Ne3 Ne6 5. Nd5 Nef4 6. Nxf4 Nxf4 7. Bxh7 Rh8',
+            '8. Qc2 Kf8 9. O-O-O'];
+        my_pgn = pgnReader({pgn: pgn_string.join(" ")});
+    });
+
+    it("should have these headers read", function() {
+        should(Object.keys(my_pgn.getTags()).length).equal(15); // EventDate is not valid
+        should(my_pgn.getTags().Site).equal("Chess.com");
+        should(my_pgn.getTags().Date).equal("2016.04.06");
+        should(my_pgn.getTags().SetUp).equal("1");
+        should(my_pgn.getTags().Variant).equal("chess 960");
+        should(my_pgn.configuration.position).equal("bbqrknrn/pppppppp/8/8/8/8/PPPPPPPP/BBQRKNRN w GDgd - 0 1");
+        should(my_pgn.game.fen()).equal("bbqr1k1r/p2ppppB/1p6/2p5/2P2n2/1P4N1/P1QPPPPP/B1KR2R1 b - - 4 9");
+    });
+});
+
 describe("When reading pgn with wrong headers", function() {
     beforeEach(function() {
         var pgn_string = ['["Event" "Casual Game"]',

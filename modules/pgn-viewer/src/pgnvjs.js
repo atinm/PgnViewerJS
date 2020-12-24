@@ -1,5 +1,5 @@
 import i18next from './i18n';
-import {pgnReader, Utils} from '@mliebelt/pgn-reader';
+import {pgnReader, Utils} from '@atinm/pgn-reader';
 //import {pgnReader, Utils} from "../../pgn-reader/src/pgn";
 import {Chessground} from 'chessground';
 import Timer from './Timer';

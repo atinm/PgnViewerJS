@@ -1,12 +1,12 @@
 {
-  "name": "@mliebelt/PgnViewerJS",
-  "version": "1.4.1",
+  "name": "@atinm/PgnViewerJS",
+  "version": "1.4.2",
   "module": "modules/pgn-viewer/src/index.js",
-  "author": "mliebelt",
+  "author": "atinm",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mliebelt/PgnViewerJS.git"
+    "url": "https://github.com/atinm/PgnViewerJS.git"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",

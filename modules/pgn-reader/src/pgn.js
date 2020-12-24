@@ -1,4 +1,4 @@
-import parser from '@mliebelt/pgn-parser';
+import parser from '@atinm/pgn-parser';
 import Chess from 'chess.js';
 
 // Initializes a new instance of the StringBuilder class
@@ -195,7 +195,8 @@ const pgnReader = function (configuration) {
         termination: 'Gives more details about the termination of the game. It may be "abandoned", "adjudication" (result determined by third-party adjudication), "death", "emergency", "normal", "rules infraction", "time forfeit", or "unterminated".',
         mode: '"OTB" (over-the-board) "ICS" (Internet Chess Server)',
         setup: '"0": position is start position, "1": tag FEN defines the position',
-        fen: 'Alternative start position, tag SetUp has to be set to "1"'
+        fen: 'Alternative start position, tag SetUp has to be set to "1"',
+        variant: 'the variant of chess, e.g. Chess960'
     };
     that.PROMOTIONS = {
         'q': 'queen',
@@ -355,7 +356,7 @@ const pgnReader = function (configuration) {
     let load_many = function () {
         that.games = that.games = parser.parse(that.configuration.pgn, {startRule: 'games'});
     }
-    let load_one = function (game) {
+    let load_one = function (gm) {
         const interpretHeaders = function () {
             if (that.tags.SetUp) {
                 const setup = that.tags.SetUp;
@@ -366,10 +367,16 @@ const pgnReader = function (configuration) {
                 }
             }
             if (that.tags.Result) {
-                that.endGame = that.tags.Result;            }
+                that.endGame = that.tags.Result;
+            }
+            if (that.tags.Variant && that.tags.Variant.substring("960") >= 0) {
+                game.set_960(true)
+            } else {
+                game.set_960(false)
+            }
         }
 
-        let _game = typeof game === 'number' ? that.games[game] : game
+        let _game = typeof gm === 'number' ? that.games[gm] : gm
         that.tags = _game.tags;
         that.moves = _game.moves;
         interpretHeaders();
